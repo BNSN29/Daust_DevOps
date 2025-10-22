@@ -1,0 +1,48 @@
+
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: first_wordpress_blog
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress123
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
+    image: mysql:8.0
+    container_name: wordpress_MySQL_DB
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress123
+      MYSQL_ROOT_PASSWORD: rootpass123
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: on-failure
+
+  phpMyAdmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: wordpress_backend_php
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    restart: on-failure
+
+
+volumes:
+  wordpress_data:
+  db_data:
+
+
